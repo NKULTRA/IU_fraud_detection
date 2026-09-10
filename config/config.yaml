@@ -1,0 +1,42 @@
+data:
+  raw_path: "data/fraud_oracle.csv"
+  processed_path: "data/applications_features.parquet"
+  target_column: "FraudFound_P"
+
+  drop_columns: 
+    - "Make"
+    - "AccidentArea"
+    - "VehicleCategory"
+    - "VehiclePrice"
+    - "DriverRating"
+    - "AgeOfVehicle"
+    - "WitnessPresent"
+    - "NumberOfCars"
+    - "BasePolicy"
+    - "DayOfWeekClaimed"
+    - "MonthClaimed"
+    - "WeekOfMonthClaimed"
+    - "PolicyNumber"
+    - "PolicyType"
+    - "RepNumber"
+    - "Fault"
+
+  ordinal_columns: 
+    - "Days_Policy_Accident"
+    - "Days_Policy_Claim"
+    - "PastNumberOfClaims"
+    - "AgeOfPolicyHolder"
+    - "NumberOfSuppliments"
+    - "AddressChange_Claim"
+    - "Year"
+
+  nominal_columns: 
+    - "Month"
+    - "WeekOfMonth"
+    - "DayOfWeek"
+    - "Sex"
+    - "MaritalStatus"
+    - "PoliceReportFiled"
+    - "AgentType"
+
+  simulated_drift_dir: "data/simulated_drift"
