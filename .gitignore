@@ -42,6 +42,8 @@ artifacts/
 outputs/
 reports/
 logs/
+mlruns/
+feature_columns.json
 *.pkl
 *.pickle
 *.joblib

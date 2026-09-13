@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pandas as pd
 
 
@@ -40,7 +42,9 @@ def transform(
 def save_processed(X: pd.DataFrame, y: pd.Series, out_path: str) -> None:
     out = X.copy()
     out["target"] = y.values
-    out.to_parquet(out_path, index=False)
+    output_path = Path(out_path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    out.to_parquet(output_path, index=False)
 
 
 def load_processed(out_path: str) -> tuple[pd.DataFrame, pd.Series]:
