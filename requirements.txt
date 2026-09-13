@@ -1,2 +1,4 @@
 pandas
 PyYAML
+scikit-learn
+mlflow

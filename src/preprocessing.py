@@ -13,16 +13,17 @@ ORDINAL_MAPPINGS = {
 }
 
 
-def build_features(
+def transform(
     df: pd.DataFrame,
-    target_column: str,
     drop_columns: list[str],
     ordinal_columns: list[str],
     ordinal_mappings: dict[str, list],
     nominal_columns: list[str],
-) -> tuple[pd.DataFrame, pd.Series]:
-    """Preprocessing pipeline for the fraud detection dataset."""
-    df = df.drop(columns=drop_columns)
+) -> pd.DataFrame:
+    """Apply the same encoding to any dataframe — a full training set OR
+    a single incoming API record. Does NOT touch the target column, so
+    it works whether or not one is present."""
+    df = df.drop(columns=[c for c in drop_columns if c in df.columns])
 
     for col in ordinal_columns:
         df[col] = pd.Categorical(
@@ -32,16 +33,20 @@ def build_features(
     df = pd.get_dummies(df, columns=nominal_columns, drop_first=True)
     bool_cols = df.select_dtypes(include="bool").columns
     df[bool_cols] = df[bool_cols].astype(int)
-    
-    y = df.pop(target_column)
-    X = df
-    return X, y
+
+    return df
 
 
 def save_processed(X: pd.DataFrame, y: pd.Series, out_path: str) -> None:
     out = X.copy()
     out["target"] = y.values
     out.to_parquet(out_path, index=False)
+
+
+def load_processed(out_path: str) -> tuple[pd.DataFrame, pd.Series]:
+    out = pd.read_parquet(out_path)
+    y = out.pop("target")
+    return out, y
 
 
 if __name__ == "__main__":
@@ -51,13 +56,14 @@ if __name__ == "__main__":
     df = load_raw_data(cfg["data"]["raw_path"])
     validate_schema(df, cfg["data"]["target_column"])
 
-    X, y = build_features(
+    X = transform(
         df,
-        target_column=cfg["data"]["target_column"],
         drop_columns=cfg["data"]["drop_columns"],
         ordinal_columns=cfg["data"]["ordinal_columns"],
-        ordinal_mappings=ORDINAL_MAPPINGS, 
+        ordinal_mappings=ORDINAL_MAPPINGS,
         nominal_columns=cfg["data"]["nominal_columns"],
     )
+    y = X.pop(cfg["data"]["target_column"])
+
     save_processed(X, y, cfg["data"]["processed_path"])
     print(f"Saved {len(X)} rows, {X.shape[1]} features -> {cfg['data']['processed_path']}")
