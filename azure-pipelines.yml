@@ -1,0 +1,30 @@
+trigger: none  # no push trigger, matches your GitHub Actions setup
+
+schedules:
+  - cron: "0 3 1 * *"
+    displayName: Monthly retrain
+    branches:
+      include:
+        - main
+    always: true
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.11'
+
+  - script: pip install -r requirements.txt
+    displayName: 'Install dependencies'
+
+  - script: python scripts/check_drift.py
+    displayName: 'Check for data drift'
+    continueOnError: true
+
+  - script: python src/train.py
+    displayName: 'Retrain model'
+
+  - script: python src/promote_model.py
+    displayName: 'Promote to production'

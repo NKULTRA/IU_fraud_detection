@@ -2,9 +2,17 @@ from pathlib import Path
 
 import pandas as pd
 import yaml
-
+from azure.storage.blob import BlobServiceClient
+import io
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
+
+
+def load_raw_data_from_blob(connection_string: str, container: str, blob_name: str) -> pd.DataFrame:
+    client = BlobServiceClient.from_connection_string(connection_string)
+    blob = client.get_blob_client(container=container, blob=blob_name)
+    data = blob.download_blob().readall()
+    return pd.read_csv(io.BytesIO(data))
 
 
 def _resolve_project_path(path: str | Path) -> Path:
