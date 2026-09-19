@@ -57,7 +57,7 @@ if __name__ == "__main__":
     from data_ingestion import load_config, load_raw_data_from_blob, validate_schema
 
     cfg = load_config()
-    df = load_raw_data_from_blob(cfg["data"]["azure"]["container"], cfg["data"]["azure"]["blob_name"])
+    df = load_raw_data_from_blob(cfg["azure"]["container"], cfg["azure"]["blob_name"])
 
     validate_schema(df, cfg["data"]["target_column"])
 
