@@ -1,4 +1,4 @@
-trigger: none  # no push trigger, matches your GitHub Actions setup
+trigger: none
 
 schedules:
   - cron: "0 3 1 * *"
@@ -18,6 +18,14 @@ steps:
 
   - script: pip install -r requirements.txt
     displayName: 'Install dependencies'
+
+  - script: python src/data_ingestion.py
+    displayName: 'Ingest data from Blob'
+    env:
+      AZURE_STORAGE_CONNECTION_STRING: $(AZURE_STORAGE_CONNECTION_STRING)
+
+  - script: python src/preprocessing.py
+    displayName: 'Build features'
 
   - script: python scripts/check_drift.py
     displayName: 'Check for data drift'

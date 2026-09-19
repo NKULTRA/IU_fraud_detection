@@ -40,3 +40,7 @@ data:
     - "AgentType"
 
   simulated_drift_dir: "data/simulated_drift"
+
+azure:
+  container: "fraud-data"
+  blob_name: "fraud_oracle.csv"

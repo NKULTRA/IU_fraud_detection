@@ -4,11 +4,13 @@ import pandas as pd
 import yaml
 from azure.storage.blob import BlobServiceClient
 import io
+import os
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 
-def load_raw_data_from_blob(connection_string: str, container: str, blob_name: str) -> pd.DataFrame:
+def load_raw_data_from_blob(container: str, blob_name: str) -> pd.DataFrame:
+    connection_string = os.environ["AZURE_STORAGE_CONNECTION_STRING"]
     client = BlobServiceClient.from_connection_string(connection_string)
     blob = client.get_blob_client(container=container, blob=blob_name)
     data = blob.download_blob().readall()
@@ -44,6 +46,9 @@ def validate_schema(df: pd.DataFrame, target_column: str) -> None:
 
 if __name__ == "__main__":
     cfg = load_config()
-    df = load_raw_data(cfg["data"]["raw_path"])
+    df = load_raw_data_from_blob(
+        container=cfg["azure"]["container"],
+        blob_name=cfg["azure"]["blob_name"]
+    )
     validate_schema(df, cfg["data"]["target_column"])
-    print(f"Loaded {len(df)} rows, {df.shape[1]} columns.")
+    print(f"Loaded {len(df)} rows, {df.shape[1]} columns from blob.")
