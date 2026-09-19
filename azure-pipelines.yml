@@ -26,6 +26,8 @@ steps:
 
   - script: python src/preprocessing.py
     displayName: 'Build features'
+    env:
+      AZURE_STORAGE_CONNECTION_STRING: $(AZURE_STORAGE_CONNECTION_STRING)
 
   - script: python scripts/check_drift.py
     displayName: 'Check for data drift'
