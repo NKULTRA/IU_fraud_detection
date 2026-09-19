@@ -1,15 +1,19 @@
 import json
 import sys
+from pathlib import Path
 
 import pandas as pd
 
-sys.path.append("src")
-from data_ingestion import load_config
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(PROJECT_ROOT))
+
+from src.data_ingestion import load_config
 
 
 def main():
     cfg = load_config()
-    df = pd.read_csv(cfg["data"]["raw_path"])
+    raw_path = PROJECT_ROOT / cfg["data"]["raw_path"]
+    df = pd.read_csv(raw_path)
 
     # Take one real row, drop the target column, keep everything else exactly as-is
     row = df.drop(columns=[cfg["data"]["target_column"]]).iloc[0]
