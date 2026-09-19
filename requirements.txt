@@ -3,3 +3,4 @@ PyYAML
 scikit-learn
 mlflow==2.22.5
 pytest
+azure-storage-blob>=12.19
