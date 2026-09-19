@@ -36,5 +36,5 @@ steps:
   - script: python src/train.py
     displayName: 'Retrain model'
 
-  - script: python src/promote_model.py
+  - script: python scripts/promote_model.py
     displayName: 'Promote to production'
