@@ -1,10 +1,15 @@
+from pathlib import Path
+
+import mlflow
 from mlflow.tracking import MlflowClient
+
+tracking_dir = Path(__file__).resolve().parents[1] / "mlruns"
+mlflow.set_tracking_uri(tracking_dir.as_uri())
 
 MODEL_NAME = "fraud-detection-model"
 
 client = MlflowClient()
 
-# Get the most recently registered version (highest version number)
 versions = client.search_model_versions(f"name='{MODEL_NAME}'")
 latest_version = max(versions, key=lambda v: int(v.version))
 

@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 import mlflow
 import mlflow.sklearn
@@ -16,8 +17,15 @@ X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42, stratify=y
 )
 
-mlflow.set_tracking_uri("sqlite:///mlflow.db")
-mlflow.set_experiment("fraud-detection")
+tracking_dir = Path(__file__).resolve().parents[1] / "mlruns"
+artifact_dir = Path(__file__).resolve().parents[1] / "mlartifacts"
+mlflow.set_tracking_uri(tracking_dir.as_uri())
+
+experiment_name = "fraud-detection"
+if mlflow.get_experiment_by_name(experiment_name) is None:
+    mlflow.create_experiment(experiment_name, artifact_location=artifact_dir.as_uri())
+
+mlflow.set_experiment(experiment_name)
 
 with mlflow.start_run():
     model = RandomForestClassifier(
