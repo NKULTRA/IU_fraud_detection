@@ -51,7 +51,7 @@ def validate_schema(df: pd.DataFrame, target_column: str) -> None:
 
 if __name__ == "__main__":
     cfg = load_config()
-    df = load_raw_data_from_blob(cfg["data"]["azure"]["container"], cfg["data"]["azure"]["blob_name"])
+    df = load_raw_data_from_blob(cfg["azure"]["container"], cfg["azure"]["blob_name"])
     validate_schema(df, cfg["data"]["target_column"])
 
     Path(cfg["data"]["raw_path"]).parent.mkdir(parents=True, exist_ok=True)
