@@ -29,8 +29,13 @@ def main():
     drift_cfg = cfg["drift"]
 
     reference_df = pd.read_parquet(drift_cfg["reference_path"])
+    
+    try:
+        new_raw = pd.read_csv(drift_cfg["new_data_path"])
+    except FileNotFoundError:
+        print(f"ERROR: drift comparison data not found at {drift_cfg['new_data_path']}")
+        sys.exit(2) 
 
-    new_raw = pd.read_csv(drift_cfg["new_data_path"])
     validate_schema(new_raw, cfg["data"]["target_column"])
     new_processed = transform(
         new_raw,

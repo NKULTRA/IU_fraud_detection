@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pandas as pd
 
-
+# Ordered categories are converted to integer codes during training and prediction.
 ORDINAL_MAPPINGS = {
     "Days_Policy_Accident": ["none", "1 to 7", "8 to 15", "15 to 30", "more than 30"],
     "Days_Policy_Claim": ["none", "8 to 15", "15 to 30", "more than 30"],

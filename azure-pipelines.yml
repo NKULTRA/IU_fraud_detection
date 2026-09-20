@@ -29,16 +29,21 @@ steps:
     env:
       AZURE_STORAGE_CONNECTION_STRING: $(AZURE_STORAGE_CONNECTION_STRING)
 
+  - script: python scripts/generate_drifted_data.py
+    displayName: 'Generate drifted data for testing'
+
   - script: |
       python src/check_drift.py
-      if [ $? -ne 0 ]; then
+      EXIT_CODE=$?
+      if [ $EXIT_CODE -eq 1 ]; then
         echo "##vso[task.setvariable variable=DRIFT_DETECTED]true"
-      else
+      elif [ $EXIT_CODE -eq 0 ]; then
         echo "##vso[task.setvariable variable=DRIFT_DETECTED]false"
+      else
+        echo "Drift check failed unexpectedly (exit $EXIT_CODE)"
+        exit $EXIT_CODE
       fi
     displayName: 'Check for data drift'
-    env:
-      AZURE_STORAGE_CONNECTION_STRING: $(AZURE_STORAGE_CONNECTION_STRING)
 
   - script: python src/train.py
     displayName: 'Retrain model'
