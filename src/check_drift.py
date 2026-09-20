@@ -3,6 +3,7 @@ import sys
 
 import numpy as np
 import pandas as pd
+import argparse
 
 from data_ingestion import load_config, validate_schema
 from preprocessing import transform, ORDINAL_MAPPINGS
@@ -25,13 +26,18 @@ def population_stability_index(reference: pd.Series, current: pd.Series, bins: i
 
 def main():
     """Compare configured feature distributions and signal whether retraining is needed."""
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--new-data", default=None, help="Path to the new/incoming data CSV")
+    args = parser.parse_args()
+
     cfg = load_config()
     drift_cfg = cfg["drift"]
 
     reference_df = pd.read_parquet(drift_cfg["reference_path"])
-    
+    new_data_path = args.new_data or drift_cfg["new_data_path"]
+
     try:
-        new_raw = pd.read_csv(drift_cfg["new_data_path"])
+        new_raw = pd.read_csv(new_data_path)
     except FileNotFoundError:
         print(f"ERROR: drift comparison data not found at {drift_cfg['new_data_path']}")
         sys.exit(2) 

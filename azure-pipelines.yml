@@ -1,5 +1,11 @@
 trigger: none
 
+parameters:
+  - name: simulateDrift
+    displayName: 'Simulate drift for this run?'
+    type: boolean
+    default: true
+
 schedules:
   - cron: "0 3 1 * *"
     displayName: Monthly retrain
@@ -31,7 +37,12 @@ steps:
     displayName: 'Generate drifted data for testing'
 
   - script: |
-      python src/check_drift.py
+      if [ -f data/fraud_oracle_drifted.csv ]; then
+        COMPARISON_FILE=data/fraud_oracle_drifted.csv
+      else
+        COMPARISON_FILE=data/fraud_oracle.csv
+      fi
+      python src/check_drift.py --new-data "$COMPARISON_FILE"
       EXIT_CODE=$?
       if [ $EXIT_CODE -eq 1 ]; then
         echo "##vso[task.setvariable variable=DRIFT_DETECTED]true"
@@ -47,6 +58,6 @@ steps:
     displayName: 'Retrain model'
     condition: or(eq(variables['DRIFT_DETECTED'], 'true'), eq(variables['Build.Reason'], 'Schedule'))
 
-  - script: python scripts/promote_model.py
+  - script: python src/promote_model.py
     displayName: 'Promote to production'
     condition: or(eq(variables['DRIFT_DETECTED'], 'true'), eq(variables['Build.Reason'], 'Schedule'))
