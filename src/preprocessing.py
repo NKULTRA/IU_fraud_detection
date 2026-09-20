@@ -58,11 +58,10 @@ def load_processed(out_path: str) -> tuple[pd.DataFrame, pd.Series]:
 
 
 if __name__ == "__main__":
-    from data_ingestion import load_config, load_raw_data_from_blob, validate_schema
+    from data_ingestion import load_config, load_raw_data, validate_schema
 
     cfg = load_config()
-    df = load_raw_data_from_blob(cfg["azure"]["container"], cfg["azure"]["blob_name"])
-
+    df = load_raw_data(cfg["data"]["raw_path"])
     validate_schema(df, cfg["data"]["target_column"])
 
     X = transform(

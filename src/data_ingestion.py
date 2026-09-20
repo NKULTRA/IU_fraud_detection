@@ -51,9 +51,9 @@ def validate_schema(df: pd.DataFrame, target_column: str) -> None:
 
 if __name__ == "__main__":
     cfg = load_config()
-    df = load_raw_data_from_blob(
-        container=cfg["azure"]["container"],
-        blob_name=cfg["azure"]["blob_name"]
-    )
+    df = load_raw_data_from_blob(cfg["data"]["azure"]["container"], cfg["data"]["azure"]["blob_name"])
     validate_schema(df, cfg["data"]["target_column"])
-    print(f"Loaded {len(df)} rows, {df.shape[1]} columns from blob.")
+
+    Path(cfg["data"]["raw_path"]).parent.mkdir(parents=True, exist_ok=True)
+    df.to_csv(cfg["data"]["raw_path"], index=False)
+    print(f"Loaded {len(df)} rows from Blob, saved to {cfg['data']['raw_path']}")
