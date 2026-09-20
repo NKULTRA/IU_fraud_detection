@@ -25,6 +25,11 @@ steps:
   - script: pip install -r requirements.txt
     displayName: 'Install dependencies'
 
+  - script: python scripts/blob_sync.py download
+    displayName: 'Restore MLflow registry from Blob'
+    env:
+      AZURE_STORAGE_CONNECTION_STRING: $(AZURE_STORAGE_CONNECTION_STRING)
+
   - script: python src/data_ingestion.py
     displayName: 'Ingest data from Blob'
     env:
@@ -61,3 +66,9 @@ steps:
   - script: python scripts/promote_model.py
     displayName: 'Promote to production'
     condition: or(eq(variables['DRIFT_DETECTED'], 'true'), eq(variables['Build.Reason'], 'Schedule'))
+
+  - script: python scripts/blob_sync.py upload
+    displayName: 'Persist MLflow registry to Blob'
+    condition: or(eq(variables['DRIFT_DETECTED'], 'true'), eq(variables['Build.Reason'], 'Schedule'))
+    env:
+      AZURE_STORAGE_CONNECTION_STRING: $(AZURE_STORAGE_CONNECTION_STRING)
