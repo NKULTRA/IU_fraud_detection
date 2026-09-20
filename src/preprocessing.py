@@ -1,3 +1,5 @@
+"""Transform raw application records into model-ready feature data."""
+
 from pathlib import Path
 
 import pandas as pd
@@ -40,6 +42,7 @@ def transform(
 
 
 def save_processed(X: pd.DataFrame, y: pd.Series, out_path: str) -> None:
+    """Store encoded features and the target column in a parquet file."""
     out = X.copy()
     out["target"] = y.values
     output_path = Path(out_path)
@@ -48,6 +51,7 @@ def save_processed(X: pd.DataFrame, y: pd.Series, out_path: str) -> None:
 
 
 def load_processed(out_path: str) -> tuple[pd.DataFrame, pd.Series]:
+    """Load a processed parquet file and separate its target column."""
     out = pd.read_parquet(out_path)
     y = out.pop("target")
     return out, y

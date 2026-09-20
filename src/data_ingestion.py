@@ -1,3 +1,5 @@
+"""Load configuration and application data from local or Azure storage."""
+
 from pathlib import Path
 
 import pandas as pd
@@ -10,6 +12,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 
 def load_raw_data_from_blob(container: str, blob_name: str) -> pd.DataFrame:
+    """Download a CSV blob from Azure Storage and return it as a dataframe."""
     connection_string = os.environ["AZURE_STORAGE_CONNECTION_STRING"]
     client = BlobServiceClient.from_connection_string(connection_string)
     blob = client.get_blob_client(container=container, blob=blob_name)
@@ -18,6 +21,7 @@ def load_raw_data_from_blob(container: str, blob_name: str) -> pd.DataFrame:
 
 
 def _resolve_project_path(path: str | Path) -> Path:
+    """Resolve relative paths against the repository root."""
     p = Path(path)
     if p.is_absolute():
         return p
@@ -25,6 +29,7 @@ def _resolve_project_path(path: str | Path) -> Path:
 
 
 def load_config(path: str = "config/config.yaml") -> dict:
+    """Load the YAML configuration from a project-relative or absolute path."""
     resolved_path = _resolve_project_path(path)
     with open(resolved_path, "r", encoding="utf-8") as f:
         return yaml.safe_load(f)

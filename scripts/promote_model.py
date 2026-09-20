@@ -1,3 +1,5 @@
+"""Promote the newest registered fraud model to the production alias."""
+
 from pathlib import Path
 
 import mlflow
@@ -8,6 +10,7 @@ mlflow.set_tracking_uri(tracking_dir.as_uri())
 
 MODEL_NAME = "fraud-detection-model"
 
+# Select the newest registered version and expose it through the production alias.
 client = MlflowClient()
 
 versions = client.search_model_versions(f"name='{MODEL_NAME}'")

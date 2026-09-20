@@ -1,3 +1,5 @@
+"""Serve fraud predictions through the Flask API."""
+
 import json
 from pathlib import Path
 
@@ -33,11 +35,13 @@ def get_model():
 
 @app.route("/health", methods=["GET"])
 def health():
+    """Return a lightweight response used to verify that the API is running."""
     return jsonify({"status": "ok"})
 
 
 @app.route("/predict", methods=["POST"])
 def predict():
+    """Transform one application and return its fraud probability."""
     payload = request.get_json()
     df = pd.DataFrame([payload])
 

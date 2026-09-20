@@ -44,3 +44,12 @@ data:
 azure:
   container: "fraud-data"
   blob_name: "fraud_oracle.csv"
+
+drift:
+  threshold: 0.2
+  reference_path: "data/applications_features.parquet"
+  new_data_path: "data/fraud_oracle_drifted.csv"
+  check_columns:
+    - "Age"
+    - "Deductible"
+    - "PastNumberOfClaims"

@@ -1,3 +1,5 @@
+"""Train, evaluate, and register the fraud detection model with MLflow."""
+
 import json
 from pathlib import Path
 
@@ -11,6 +13,7 @@ from data_ingestion import load_config
 from preprocessing import load_processed
 
 cfg = load_config()
+# Load the already-prepared feature matrix and split it for evaluation.
 X, y = load_processed(cfg["data"]["processed_path"])
 
 X_train, X_test, y_train, y_test = train_test_split(
@@ -27,6 +30,7 @@ if mlflow.get_experiment_by_name(experiment_name) is None:
 
 mlflow.set_experiment(experiment_name)
 
+# Train, evaluate, and persist the model and its feature ordering in one run.
 with mlflow.start_run():
     model = RandomForestClassifier(
         n_estimators=200,
