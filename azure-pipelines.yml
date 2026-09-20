@@ -40,10 +40,11 @@ steps:
 
   - script: python scripts/generate_drifted_data.py
     displayName: 'Generate drifted data for testing'
-    condition: and(succeeded(), eq('${{ parameters.simulateDrift }}', 'true'))
+    condition: and(succeeded(), ${{ eq(parameters.simulateDrift, true) }})
 
   - script: |
-      if [ "${{ parameters.simulateDrift }}" = "true" ]; then
+      SIMULATE_DRIFT="${{ parameters.simulateDrift }}"
+      if [ "${SIMULATE_DRIFT,,}" = "true" ]; then
         COMPARISON_FILE=data/fraud_oracle_drifted.csv
       else
         COMPARISON_FILE=data/fraud_oracle.csv
