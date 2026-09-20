@@ -1,4 +1,8 @@
-"""Load configuration and application data from local or Azure storage."""
+"""Load configuration and application data from local or Azure storage.
+
+When run as a script, the Azure CSV is downloaded and saved to the configured
+local raw-data path for the following pipeline steps.
+"""
 
 from pathlib import Path
 

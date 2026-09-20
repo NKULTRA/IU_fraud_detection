@@ -1,4 +1,8 @@
-"""Compare reference and incoming feature distributions for data drift."""
+"""Compare configured reference and incoming feature distributions for drift.
+
+The incoming CSV can be overridden with ``--new-data``; exit status 1 signals
+drift, while status 2 signals an invalid comparison-data path.
+"""
 import sys
 
 import numpy as np
@@ -25,7 +29,7 @@ def population_stability_index(reference: pd.Series, current: pd.Series, bins: i
 
 
 def main():
-    """Compare configured feature distributions and signal whether retraining is needed."""
+    """Check feature drift and return a pipeline-friendly status code."""
     parser = argparse.ArgumentParser()
     parser.add_argument("--new-data", default=None, help="Path to the new/incoming data CSV")
     args = parser.parse_args()

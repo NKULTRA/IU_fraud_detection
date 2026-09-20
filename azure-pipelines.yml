@@ -58,6 +58,6 @@ steps:
     displayName: 'Retrain model'
     condition: or(eq(variables['DRIFT_DETECTED'], 'true'), eq(variables['Build.Reason'], 'Schedule'))
 
-  - script: python src/promote_model.py
+  - script: python scripts/promote_model.py
     displayName: 'Promote to production'
     condition: or(eq(variables['DRIFT_DETECTED'], 'true'), eq(variables['Build.Reason'], 'Schedule'))
